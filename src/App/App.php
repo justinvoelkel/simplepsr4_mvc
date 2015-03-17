@@ -7,7 +7,7 @@
  */
 
 namespace simplepsr4\App;
-
+require_once __DIR__.'/../Database/database.php';
 
 class App
 {

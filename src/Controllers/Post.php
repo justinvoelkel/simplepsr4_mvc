@@ -8,14 +8,19 @@
 
 namespace simplepsr4\Controllers;
 use simplepsr4\Core\Controller;
+use simplepsr4\Models\Post as Posts;
 
 class Post extends Controller {
 
     public function index($param=''){
-        $post = $this->model('Post');
-        $post->title = $param;
 
-        echo $post->title;
+        $posts = Posts::all();
+        $this->view('Post',$posts);
+
+    }
+
+    public function create(){
+
     }
 
 }

@@ -11,6 +11,6 @@ use simplepsr4\Core\Controller;
 class Home extends Controller
 {
     public function index($params=''){
-        die('home');
+        $this->view('Home');
     }
 }

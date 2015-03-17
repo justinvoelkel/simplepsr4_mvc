@@ -7,9 +7,9 @@
  */
 
 namespace simplepsr4\Models;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as Eloquent;
 
-class Post extends Model{
-    Public $title;
-    protected $fillable =[];
+class Post extends Eloquent{
+    public $name;
+    protected $fillable =['title','content'];
 }

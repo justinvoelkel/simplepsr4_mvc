@@ -19,7 +19,7 @@ class Controller
 
     public function view($view,$data=[])
     {
-        require_once '../Views/'. $view .'.php';
+        require_once __DIR__.'/../Views/'. $view .'.php';
     }
 
 }
