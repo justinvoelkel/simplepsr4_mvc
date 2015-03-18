@@ -8,6 +8,8 @@
 
 namespace simplepsr4\Core;
 use simplepsr4\Models;
+use Twig_Environment;
+use Twig_Loader_Filesystem;
 
 class Controller
 {
@@ -19,7 +21,12 @@ class Controller
 
     public function view($view,$data=[])
     {
-        require_once __DIR__.'/../Views/'. $view .'.php';
+        $loader = new Twig_Loader_Filesystem(__DIR__.'/../Views');
+
+        $twig = new Twig_Environment($loader,array('debug'=>true));
+        $twig->addExtension(new \Twig_Extension_Debug());
+
+        echo $twig->render($view.'.php',(array)$data);
     }
 
 }
