@@ -14,7 +14,7 @@ class Post extends Controller {
 
     public function index($param=''){
 
-        $posts = Posts::all();
+        $posts = Posts::all()->toArray();
         $this->view('Post',$posts);
 
     }
