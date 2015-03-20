@@ -13,8 +13,8 @@ use simplepsr4\Models\Post as Posts;
 class Post extends Controller {
 
     public function index($id){
-
-
+        $post = Posts::find($id)->toArray();
+        $this->view('Post',$post);
     }
 
     public function create(){
