@@ -1,5 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
 <h1>Posts</h1>
-{{dump(data)}}
 {% for post in data %}
-    <h2>{{ post.title }}</h2>
+<h3>{{post.title}}</h3>
+<p>{{post.content}}</p>
+<hr/>
 {% endfor %}
+</body>
+</html>
