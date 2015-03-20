@@ -12,10 +12,8 @@ use simplepsr4\Models\Post as Posts;
 
 class Post extends Controller {
 
-    public function index($param=''){
+    public function index($id){
 
-        $posts = Posts::all()->toArray();
-        $this->view('Post',$posts);
 
     }
 

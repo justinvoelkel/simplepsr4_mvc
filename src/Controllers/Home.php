@@ -7,10 +7,12 @@
  */
 namespace simplepsr4\Controllers;
 use simplepsr4\Core\Controller;
+use simplepsr4\Models\Post;
 
 class Home extends Controller
 {
-    public function index($params=''){
-        $this->view('Home');
+    public function index(){
+        $posts = Post::all()->toArray();
+        $this->view('Home',$posts);
     }
 }

@@ -22,11 +22,10 @@ class Controller
     public function view($view,$data=array())
     {
         $loader = new Twig_Loader_Filesystem(__DIR__.'/../Views');
-
         $twig = new Twig_Environment($loader,array('debug'=>true));
         $twig->addExtension(new \Twig_Extension_Debug());
 
-        echo $twig->render($view.'.php',$data);
+        echo $twig->render($view.'.php',array('data'=>$data));
     }
 
 }
