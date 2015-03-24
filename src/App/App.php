@@ -15,13 +15,17 @@ class App
     protected $method = 'index';
     protected $params = [];
 
+    protected $prefix = array('admin','api');
+    protected $controller_base = "/../Controllers/";
+    protected $controller_namespace ='simplepsr4\Controllers\\';
+
      public function __construct()
      {
          $url = $this->parseUrl();
 
-         if(file_exists(__DIR__.'/../Controllers/'.ucfirst($url[0]).'.php'))
+         if(file_exists(__DIR__.$this->controller_base.ucfirst($url[0]).'.php'))
          {
-             $this->controller = 'simplepsr4\Controllers\\'.ucfirst($url[0]);
+             $this->controller = $this->controller_namespace.ucfirst($url[0]);
              unset($url[0]);
          }
 
@@ -48,9 +52,17 @@ class App
 
     private function parseUrl()
     {
+
         if(isset($_GET['url']))
         {
-            return $url = explode('/',filter_var(rtrim($_GET['url'],'/'),FILTER_SANITIZE_URL));
+            $url = explode('/',filter_var(rtrim($_GET['url'],'/'),FILTER_SANITIZE_URL));
+            if(in_array($url[0],$this->prefix)){
+                $this->controller_base = $this->controller_base.ucfirst($url[0])."/";
+                $this->controller_namespace = $this->controller_namespace.ucfirst($url[0])."\\";
+                array_shift($url);
+            }
+
+            return $url;
         }
     }
 }
