@@ -12,7 +12,8 @@ use simplepsr4\Models\Post as Posts;
 
 class Post extends Controller{
 
-    public function index(){
+    public function index()
+    {
         $posts = Posts::all();
         echo json_encode($posts);
     }

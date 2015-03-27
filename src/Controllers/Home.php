@@ -11,7 +11,8 @@ use simplepsr4\Models\Post;
 
 class Home extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $posts = Post::all()->toArray();
         $this->view('Home',$posts);
     }
