@@ -18,8 +18,6 @@ class Route {
     protected $method = 'index';
     protected $params = [];
 
-
-
     public function add($url,$method = 'index')
     {
         $this->resources[] = ['url'=>$url,'method'=>$method];
@@ -87,5 +85,4 @@ class Route {
             return $controller_namespace;
         }
     }
-
 }
