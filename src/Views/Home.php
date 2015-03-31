@@ -13,7 +13,7 @@
             {% for post in data %}
             <h3>{{post.title}}</h3>
             <p>{{post.content}}</p>
-            <a href="post/{{post.id}}">Read Post</a>
+            <a href="/psr4_testing/post/{{post.id}}">Read Post</a>
             <hr/>
             {% endfor %}
         </div>
