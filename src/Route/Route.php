@@ -25,64 +25,73 @@ class Route {
 
     public function process($request)
     {
-
-        $this->controller = $this->lookup($request)?:$this->controller;
-        $this->method = $this->match($request)?:$this->method;
-
+        $request = $this->matchRoute($request);
+        $request = $request?$this->lookupController($request):false;
         $this->controller = new $this->controller;
+        $this->method = $request?$this->lookupMethod($request):false;
 
         call_user_func_array([$this->controller,$this->method],$this->params);
 
     }
 
-    private function match($request)
+    private function matchRoute($request)
     {
         $sanitized_url = filter_var(rtrim($request,'/'),FILTER_SANITIZE_URL);
 
         foreach($this->resources as $key=>$resource)
         {
+
             if('/'.$sanitized_url == $resource['url'])
             {
-                $this->method = $resource['method'];
+                return $request;
+            }
+            elseif('/'.(rtrim(substr($sanitized_url,0,strrpos($sanitized_url,'/')+1),'/')) == $resource['url'])
+            {
+                $temp = explode('/',$sanitized_url);
+                $this->params[] = array_pop($temp);
+                return implode('/',$temp).'/';
             }
         }
 
-        return $this->method;
+        return false;
 
     }
 
-    private function lookup($url)
-    {
-
-        $sanitized_url = filter_var(rtrim($url,'/'),FILTER_SANITIZE_URL);
-        $ar1 = explode('/',$sanitized_url);
+    private function lookupController($route)
+    {var_dump($route);
+        $path =  explode('/',filter_var(rtrim($route,'/'),FILTER_SANITIZE_URL));
         $controllers_path = '/../Controllers/';
         $controller_namespace = 'simplepsr4\Controllers\\';
-        $keys = array_keys($ar1);
+        $keys = array_keys($path);
 
-        foreach($ar1 as $k=>$v){
+        foreach($path as $k=>$v){
 
             if(is_dir(__DIR__.$controllers_path.ucfirst($v)))
             {
                 $controllers_path.=ucfirst($v).'/';
                 $controller_namespace.=ucfirst($v).'\\';
+                unset($path[$k]);
                 continue;
             }
             elseif(file_exists(__DIR__.$controllers_path.ucfirst($v).'.php'))
             {
-                $controller_namespace.=ucfirst($v);
+                $this->controller = $controller_namespace.ucfirst($v);
+                unset($path[$k]);
                 continue;
             }
             elseif( end($keys)!==$k )
             {
-                return null;
-            }
-            else
-            {
-                $this->params[] = $v;
+                return false;
             }
 
-            return $controller_namespace;
         }
+
+        return $path;
+
+    }
+
+    private function lookupMethod($method)
+    {
+        return method_exists($this->controller,$method);
     }
 }

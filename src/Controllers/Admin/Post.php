@@ -18,4 +18,9 @@ class Post extends Controller{
         echo json_encode($posts);
     }
 
+    public function create($params)
+    {
+        var_dump($params);
+    }
+
 }
