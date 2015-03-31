@@ -20,6 +20,7 @@ class App
          $route->add('/');
          $route->add('/post');
          $route->add('/admin/post');
+         $route->add('/admin/post/create');
 
          $request = isset($_GET['url'])?$_GET['url']:'/';
          $route->process($request);
