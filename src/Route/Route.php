@@ -8,28 +8,35 @@
 
 namespace simplepsr4\Route;
 
-
 class Route {
 
-    protected $url = [];
-    protected $resources = [];
+    protected $routes = [];
 
     protected $controller = 'simplepsr4\Controllers\Home';
     protected $method = 'index';
     protected $params = [];
+    protected $request = '';
 
-    public function add($url,$method = 'index')
+    public function add($url,$method=false)
     {
-        $this->resources[] = ['url'=>$url,'method'=>$method];
+        $this->routes[] = ['url'=>$url,'method'=>$method?:$this->method];
     }
 
     public function process($request)
     {
-        $request = $this->matchRoute($request);
-        $request = $request?$this->lookupController($request):false;
-        $this->controller = new $this->controller;
-        $this->method = $request?$this->lookupMethod($request):false;
-
+        $this->request = $request;
+        $match = $this->matchRoute($request);
+        $controller = $match?$this->lookupController($request):$this->controller;
+        var_dump($controller);
+        $this->controller = $controller?new $controller:new $this->controller;
+        if($this->controller)
+        {
+            $method = $this->lookupMethod($this->routes[$match]['method'])?:$this->request;
+            if(!$method){
+                $this->params =$this->request;
+            }
+        }
+//var_dump($this);
         call_user_func_array([$this->controller,$this->method],$this->params);
 
     }
@@ -38,18 +45,11 @@ class Route {
     {
         $sanitized_url = filter_var(rtrim($request,'/'),FILTER_SANITIZE_URL);
 
-        foreach($this->resources as $key=>$resource)
+        foreach($this->routes as $key=>$route)
         {
-
-            if('/'.$sanitized_url == $resource['url'])
+            if('/'.$sanitized_url == $route['url'])
             {
-                return $request;
-            }
-            elseif('/'.(rtrim(substr($sanitized_url,0,strrpos($sanitized_url,'/')+1),'/')) == $resource['url'])
-            {
-                $temp = explode('/',$sanitized_url);
-                $this->params[] = array_pop($temp);
-                return implode('/',$temp).'/';
+                return $key;
             }
         }
 
@@ -58,7 +58,7 @@ class Route {
     }
 
     private function lookupController($route)
-    {var_dump($route);
+    {
         $path =  explode('/',filter_var(rtrim($route,'/'),FILTER_SANITIZE_URL));
         $controllers_path = '/../Controllers/';
         $controller_namespace = 'simplepsr4\Controllers\\';
@@ -75,8 +75,9 @@ class Route {
             }
             elseif(file_exists(__DIR__.$controllers_path.ucfirst($v).'.php'))
             {
-                $this->controller = $controller_namespace.ucfirst($v);
+                $controller_namespace.=ucfirst($v);
                 unset($path[$k]);
+                var_dump($path);
                 continue;
             }
             elseif( end($keys)!==$k )
@@ -85,13 +86,17 @@ class Route {
             }
 
         }
-
-        return $path;
-
+        $this->request = $path;
+        return $controller_namespace;
     }
 
     private function lookupMethod($method)
     {
-        return method_exists($this->controller,$method);
+        if(method_exists($this->controller,$method))
+        {
+            return $method;
+        }
+
+        return false;
     }
 }
