@@ -25,18 +25,21 @@ class Route {
     public function process($request)
     {
         $this->request = $request;
+
         $match = $this->matchRoute($request);
-        $controller = $match?$this->lookupController($request):$this->controller;
-        var_dump($controller);
+        $controller = $this->lookupController($request)?:$this->controller;
         $this->controller = $controller?new $controller:new $this->controller;
+
         if($this->controller)
         {
-            $method = $this->lookupMethod($this->routes[$match]['method'])?:$this->request;
-            if(!$method){
-                $this->params =$this->request;
+
+            if($method = $this->lookupMethod($this->routes[$match]['method'])){
+                $this->method = $method;
             }
+
+            $this->params = $this->request;
         }
-//var_dump($this);
+        var_dump($this);
         call_user_func_array([$this->controller,$this->method],$this->params);
 
     }
@@ -77,7 +80,6 @@ class Route {
             {
                 $controller_namespace.=ucfirst($v);
                 unset($path[$k]);
-                var_dump($path);
                 continue;
             }
             elseif( end($keys)!==$k )
