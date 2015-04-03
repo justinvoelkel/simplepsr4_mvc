@@ -24,22 +24,23 @@ class Route {
 
     public function process($request)
     {
-        $this->request = $request;
-
-        $match = $this->matchRoute($request);
-        $controller = $this->lookupController($request)?:$this->controller;
-        $this->controller = $controller?new $controller:new $this->controller;
+        $this->request      = $request;
+        $match              = $this->matchRoute($request);
+        $controller         = $this->lookupController($request)?:$this->controller;
+        $this->controller   = $controller?new $controller:new $this->controller;
 
         if($this->controller)
         {
 
-            if($method = $this->lookupMethod($this->routes[$match]['method'])){
+            if($method = $this->lookupMethod($this->routes[$match]['method']))
+            {
                 $this->method = $method;
             }
 
             $this->params = $this->request;
+
         }
-        var_dump($this);
+
         call_user_func_array([$this->controller,$this->method],$this->params);
 
     }
@@ -69,7 +70,13 @@ class Route {
 
         foreach($path as $k=>$v){
 
-            if(is_dir(__DIR__.$controllers_path.ucfirst($v)))
+            if($v == '')
+            {
+                unset($path[$k]);
+                $controller_namespace = $this->controller;
+                continue;
+            }
+            elseif(is_dir(__DIR__.$controllers_path.ucfirst($v)))
             {
                 $controllers_path.=ucfirst($v).'/';
                 $controller_namespace.=ucfirst($v).'\\';
@@ -86,6 +93,7 @@ class Route {
             {
                 return false;
             }
+
 
         }
         $this->request = $path;
